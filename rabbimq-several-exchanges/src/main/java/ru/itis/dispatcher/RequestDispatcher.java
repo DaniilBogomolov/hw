@@ -1,4 +1,8 @@
 package ru.itis.dispatcher;
 
-public class RequestDispatcher {
+import org.springframework.stereotype.Component;
+
+public interface RequestDispatcher {
+
+    void doResolve(String command);
 }

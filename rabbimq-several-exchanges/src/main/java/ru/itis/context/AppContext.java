@@ -1,4 +1,9 @@
 package ru.itis.context;
 
-public class ApplicationContext {
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@ComponentScan("ru.itis")
+public class AppContext {
 }

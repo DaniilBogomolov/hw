@@ -1,26 +1,49 @@
 package ru.itis.services.impl.consumers;
 
+import com.itextpdf.forms.PdfAcroForm;
+import com.itextpdf.forms.fields.PdfFormField;
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfReader;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import lombok.SneakyThrows;
 import org.springframework.stereotype.Component;
 import ru.itis.models.UserDetails;
 import ru.itis.services.AbstractConsumer;
 import ru.itis.services.AbstractPublisher;
 
 import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
 import java.util.Date;
+import java.util.Map;
 import java.util.UUID;
 
 @Component("gmedical_insurance")
 public class MedicalInsuranceConsumer extends AbstractConsumer {
 
     public static final String QUEUE_NAME = "medical_insurance_queue";
+    public static final String PDF_TEMPLATE_NAME = "insurance.pdf";
 
     @Override
     public void getForUser(UserDetails info) {
         super.getForUser(info, QUEUE_NAME);
     }
 
+    @SneakyThrows
     @Override
-    protected void generatePdf(ByteArrayOutputStream outputStream) {
-        super.generatePdf(outputStream, new Date().toString() + UUID.randomUUID().toString() + ":medical.pdf");
+    protected PdfDocument generateDocument() {
+        return new PdfDocument(new PdfReader(PDF_TEMPLATE_NAME),
+                new PdfWriter(new FileOutputStream("documents/" + new Date().toString() + UUID.randomUUID().toString() + ":insurance.pdf")));
+    }
+
+    @Override
+    protected void fillForm(Map<String, PdfFormField> formFields, PdfFont font, UserDetails details) {
+        formFields.get("firstName").setValue(details.getFirstName()).setFont(font);
+        formFields.get("lastName").setValue(details.getLastName()).setFont(font);
+        formFields.get("age").setValue(String.valueOf(details.getAge())).setFont(font);
+        formFields.get("passData").setValue(details.getPassportNumber()).setFont(font);
+        formFields.get("issueDate").setValue(details.getIssueDate()).setFont(font);
     }
 }

@@ -9,32 +9,22 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.concurrent.TimeoutException;
 
-@Component
-public class PublishService {
-
-    public static final String ROUTING_KEY = "department.insurance.*";
-    private static final String EXCHANGE_NAME = "medical_exchange";
-    public static final String EXCHANGE_TYPE = "topic";
+public abstract class AbstractPublisher {
 
     private ConnectionFactory connectionFactory;
 
-    public PublishService() {
+    public AbstractPublisher() {
         connectionFactory = new ConnectionFactory();
         connectionFactory.setHost("localhost");
     }
 
-//    public PublishService(UserDetails info) {
-//        this.info = info;
-//        connectionFactory = new ConnectionFactory();
-//        connectionFactory.setHost("localhost");
-//    }
+    public abstract void publish(UserDetails info);
 
-    public void publishAll(UserDetails info) {
+    public void publish(String routingKey, String exchangeName, String exchangeType, UserDetails info) {
         try {
             Connection connection = connectionFactory.newConnection();
             Channel channel = connection.createChannel();
-            channel.exchangeDeclare(EXCHANGE_NAME, EXCHANGE_TYPE, true);
-            channel.basicPublish(EXCHANGE_NAME, ROUTING_KEY,
+            channel.basicPublish(exchangeName, routingKey,
                     new AMQP.BasicProperties().builder()
                             .headers(Map.of("user", info.toString()))
                             .build()

@@ -1,0 +1,54 @@
+= Описание API по сервису заказов
+
+== Методы
+
+|===
+|Метод | Назначение
+|`PUT`
+|Обновить статус заказа или его состояние
+|===
+
+=== Обновление статуса заказа
+
+Можно обновить статус заказа одним из следующих статусов: ACCEPTED, READY, IN_DELIVERY, ACCEPTED
+
+.request
+
+include::{snippets}\update_order\http-request.adoc[]
+
+.response
+
+include::{snippets}\update_order\http-response.adoc[]
+
+.response-fields
+
+include::{snippets}\update_order\response-fields.adoc[]
+
+=== Обновление статуса несуществующего заказа
+
+Запрос к обновлению несуществующего заказа возвращает ошибку запроса
+
+.request
+
+include::{snippets}\update_non_existing_order\http-request.adoc[]
+
+.response
+
+include::{snippets}\update_non_existing_order\http-response.adoc[]
+
+=== Обновление неккоректным значением статуса
+
+Статусы заказа могут меняться в следующем порядке: ACCEPTED -> READY -> IN_DELIVERY -> ACCEPTED
+
+Обновление заказа со статусом READY значением статуса ACCEPTED запрещено и вызывает ошибку запроса
+
+.order
+include::{snippets}\update_order\http-response.adoc[]
+
+.request
+
+include::{snippets}\update_invalid_status\http-request.adoc[]
+
+.response
+
+include::{snippets}\update_invalid_status\http-response.adoc[]
